@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../models/todo.dart';
 import '../widgets/add_todo_form.dart';
 import 'todo_details_screen.dart';
@@ -15,20 +17,46 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Todo> _todos = [];
   String _filter = 'All';
-
   final _searchController = TextEditingController();
   String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    loadTodos();
+  }
+
+  Future<void> loadTodos() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'todos_${widget.userName}';
+    final todosJson = prefs.getString(key);
+
+    if (todosJson != null) {
+      final todosList = jsonDecode(todosJson) as List<dynamic>;
+      setState(() {
+        _todos = todosList.map((json) => Todo.fromJson(json)).toList();
+      });
+    }
+  }
+
+  Future<void> saveTodos() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'todos_${widget.userName}';
+    final todosJson = jsonEncode(_todos.map((todo) => todo.toJson()).toList());
+    await prefs.setString(key, todosJson);
+  }
 
   void _addTodo(String title, String? description, String category) {
     setState(() {
       _todos.add(Todo(
-        id: DateTime.now().toString(),
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
         title: title,
         description: description,
         createdAt: DateTime.now(),
         category: category,
       ));
     });
+    saveTodos();
   }
 
   void _toggleTodo(String id) {
@@ -47,20 +75,23 @@ class _HomeScreenState extends State<HomeScreen> {
         return todo;
       }).toList();
     });
+    saveTodos();
   }
 
   void _updateTodo(Todo updatedTodo) {
     setState(() {
-      _todos = _todos.map((todo) {
-        return todo.id == updatedTodo.id ? updatedTodo : todo;
-      }).toList();
+      _todos = _todos
+          .map((todo) => todo.id == updatedTodo.id ? updatedTodo : todo)
+          .toList();
     });
+    saveTodos();
   }
 
   void _deleteTodo(String id) {
     setState(() {
       _todos.removeWhere((todo) => todo.id == id);
     });
+    saveTodos();
   }
 
   void _showEditDialog(Todo todo) {
@@ -86,23 +117,21 @@ class _HomeScreenState extends State<HomeScreen> {
             DropdownButtonFormField<String>(
               value: selectedCategory,
               items: const ['Personal', 'School', 'Urgent']
-                  .map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+                  .map((String value) => DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              ))
+                  .toList(),
               onChanged: (value) => selectedCategory = value!,
             ),
           ],
         ),
         actions: [
           TextButton(
-            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
           ),
           TextButton(
-            child: const Text('Save'),
             onPressed: () {
               _updateTodo(Todo(
                 id: todo.id,
@@ -114,6 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ));
               Navigator.pop(context);
             },
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -121,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Todo> _getFilteredTodos() {
-    var filtered = _todos.where((todo) {
+    final filtered = _todos.where((todo) {
       final titleMatch =
       todo.title.toLowerCase().contains(_searchQuery.toLowerCase());
       final descMatch = todo.description
@@ -130,8 +160,6 @@ class _HomeScreenState extends State<HomeScreen> {
           false;
       return titleMatch || descMatch;
     }).toList();
-
-
 
     switch (_filter) {
       case 'Completed':
@@ -155,15 +183,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           DropdownButton<String>(
             value: _filter,
-            items: ['All', 'Completed', 'Pending'].map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+            items: ['All', 'Completed', 'Pending']
+                .map((String value) => DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            ))
+                .toList(),
             onChanged: (value) => setState(() => _filter = value!),
           ),
-
         ],
       ),
       body: Column(
@@ -192,7 +219,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border(
-                          bottom: BorderSide(color: Colors.grey.shade200)),
+                        bottom: BorderSide(color: Colors.grey.shade200),
+                      ),
                     ),
                     child: ListTile(
                       leading: Checkbox(
