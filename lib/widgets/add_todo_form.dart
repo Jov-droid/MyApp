@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/todo.dart'; // ADD THIS IMPORT
+import '../providers/providers.dart';
 
-class AddTodoForm extends StatefulWidget {
-  final Function(String, String?, String) onSubmit;
+class AddTodoForm extends ConsumerStatefulWidget {
+  final String userName;
 
-  const AddTodoForm(this.onSubmit, {super.key});
+  const AddTodoForm({required this.userName, super.key});
 
   @override
-  _AddTodoFormState createState() => _AddTodoFormState();
+  ConsumerState<AddTodoForm> createState() => _AddTodoFormState();
 }
 
-class _AddTodoFormState extends State<AddTodoForm> {
+class _AddTodoFormState extends ConsumerState<AddTodoForm> {
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   String _selectedCategory = 'Personal';
@@ -43,10 +46,16 @@ class _AddTodoFormState extends State<AddTodoForm> {
             child: const Text('Add Todo'),
             onPressed: () {
               if (_titleController.text.isNotEmpty) {
-                widget.onSubmit(
-                  _titleController.text,
-                  _descController.text.isEmpty ? null : _descController.text,
-                  _selectedCategory,
+                ref.read(todoListProvider.notifier).addTodo(
+                  Todo( // FIXED: Now recognizes Todo class
+                    id: DateTime.now().microsecondsSinceEpoch.toString(),
+                    title: _titleController.text,
+                    description: _descController.text.isEmpty
+                        ? null : _descController.text,
+                    createdAt: DateTime.now(),
+                    category: _selectedCategory,
+                  ),
+                  widget.userName,
                 );
                 Navigator.pop(context);
               }

@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../models/todo.dart';
+import '../providers/providers.dart';
 
-class TodoDetailsScreen extends StatefulWidget {
+class TodoDetailsScreen extends ConsumerStatefulWidget {
   final Todo todo;
-  final Function(Todo) onUpdate;
-  final Function(String) onDelete;
+  final String userName;
 
   const TodoDetailsScreen({
     required this.todo,
-    required this.onUpdate,
-    required this.onDelete,
+    required this.userName,
     super.key,
   });
 
   @override
-  _TodoDetailsScreenState createState() => _TodoDetailsScreenState();
+  ConsumerState<TodoDetailsScreen> createState() => _TodoDetailsScreenState();
 }
 
-class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
+class _TodoDetailsScreenState extends ConsumerState<TodoDetailsScreen> {
   late TextEditingController _titleController;
   late TextEditingController _descController;
   late String _selectedCategory;
@@ -40,7 +40,9 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () {
-              widget.onDelete(widget.todo.id);
+              ref
+                  .read(todoListProvider.notifier)
+                  .deleteTodo(widget.todo.id, widget.userName);
               Navigator.pop(context);
             },
           ),
@@ -82,7 +84,7 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
             Text(
               'Created: ${DateFormat('MMM dd, yyyy - HH:mm').format(widget.todo.createdAt)}',
               style: TextStyle(
-                color: Colors.grey[600],
+                color: Theme.of(context).textTheme.bodySmall?.color,
                 fontSize: 14,
               ),
             ),
@@ -92,14 +94,17 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.save),
         onPressed: () {
-          widget.onUpdate(Todo(
-            id: widget.todo.id,
-            title: _titleController.text,
-            description: _descController.text,
-            createdAt: widget.todo.createdAt,
-            isCompleted: widget.todo.isCompleted,
-            category: _selectedCategory,
-          ));
+          ref.read(todoListProvider.notifier).updateTodo(
+            Todo(
+              id: widget.todo.id,
+              title: _titleController.text,
+              description: _descController.text,
+              createdAt: widget.todo.createdAt,
+              isCompleted: widget.todo.isCompleted,
+              category: _selectedCategory,
+            ),
+            widget.userName,
+          );
           Navigator.pop(context);
         },
       ),
