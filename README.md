@@ -78,38 +78,27 @@ These widgets improve code reusability, readability, and UI consistency across t
 # 📁 Project Structure
 ```text
 MyApp/
-├── android/                        # Android native build/config files
-├── ios/                            # iOS native build/config files
-├── web/                            # Flutter web configuration (if used)
-├── lib/                            # Dart source code
-│   ├── main.dart                   # App entry point
-│   ├── constants/                  # App constants (colors, strings, enums)
-│   │   └── app_constants.dart
-│   ├── models/                     # Data models
-│   │   └── todo_model.dart         # Defines the Todo data structure
-│   ├── screens/                    # All UI screens in the app
-│   │   ├── login_screen.dart       # User login UI
-│   │   ├── todo_list_screen.dart   # Displays list of todos
-│   │   └── add_todo_screen.dart    # Screen/modal to add or edit todo
-│   ├── widgets/                    # Reusable UI components
-│   │   ├── todo_item_widget.dart   # Individual todo list item
-│   │   ├── search_todo_widget.dart # Search bar UI widget
-│   │   ├── filter_dropdown.dart    # Filter dropdown component
-│   │   └── custom_inputs.dart      # Inputs used across screens
-│   ├── services/                   # App services
-│   │   └── storage_service.dart    # Handles storing/loading todos
-│   ├── theme/                      # App theme data
-│   │   └── app_theme.dart          # Light/Dark theme definitions
-│   └── utils/                      # Utility functions/helpers
-│       └── helpers.dart
-├── assets/                         # Static assets
-│   ├── images/                     # App images used in UI
-│   └── icons/                      # Icons used in UI
-├── test/                           # Unit / widget tests
-│   └── widget_test.dart
-├── .gitignore
-├── pubspec.yaml                    # Dependencies and assets configuration
-└── README.md                       # Project documentation
+├── android/             # Android native project files
+├── ios/                 # iOS native project files
+├── linux/               # Linux platform-specific files
+├── macos/               # macOS platform-specific files
+├── web/                 # Web platform-specific files
+├── windows/             # Windows platform-specific files
+├── lib/                 # Main Flutter source code
+│   ├── models/          # Data models
+│   ├── providers/       # State management (e.g., Provider)
+│   ├── screens/         # UI screens
+│   ├── services/        # Business logic, APIs
+│   ├──widgets/         # Reusable UI widgets
+│   └── main.dart        # Entry point of the app
+├── assets/              # Images, fonts, and other assets
+├── test/                # Unit and widget tests
+├── .gitignore           # Files/folders to ignore in Git
+├── pubspec.yaml         # Flutter dependencies and assets
+├── pubspec.lock         # Locked versions of dependencies
+├── analysis_options.yaml # Linter and code analysis rules
+└── README.md            # Project documentation
+
 ```
 # 🧠 App Workflow
 
