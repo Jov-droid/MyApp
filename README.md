@@ -34,7 +34,26 @@ The app includes a login screen, ensuring that task management is tied to authen
 - Light and Dark mode toggle
 - Floating Action Button (FAB) for adding tasks
 - Clean and responsive UI using Flutter Material components
-- 
+
+5. 🧩 Reusable Widgets
+The app is built using custom reusable widgets to keep the UI clean, modular, and maintainable:
+- Todo Item Widget:
+   Displays task title, description, category badge, and action icons
+
+- Search Bar Widget:
+   Enables searching todos by title
+
+- Filter Dropdown Widget:
+   Allows filtering todos by category
+
+- Custom Input Fields:
+   Reused across login and add/edit todo screens
+
+- Action Buttons:
+   Edit and delete icons reused across todo items
+
+These widgets improve code reusability, readability, and UI consistency across the app.  
+  
 ## Screenshots
 ### 1. White theme
 ![WhatsApp Image 2025-09-18 at 22 18 37](https://github.com/user-attachments/assets/05bec800-8bcc-4a1d-a572-942400f0a357)
@@ -57,4 +76,61 @@ The app includes a login screen, ensuring that task management is tied to authen
 | Authentication   | Local / Extendable                       |
 ```
 # 📁 Project Structure
+```text
+MyApp/
+├── android/                        # Android native build/config files
+├── ios/                            # iOS native build/config files
+├── web/                            # Flutter web configuration (if used)
+├── lib/                            # Dart source code
+│   ├── main.dart                   # App entry point
+│   ├── constants/                  # App constants (colors, strings, enums)
+│   │   └── app_constants.dart
+│   ├── models/                     # Data models
+│   │   └── todo_model.dart         # Defines the Todo data structure
+│   ├── screens/                    # All UI screens in the app
+│   │   ├── login_screen.dart       # User login UI
+│   │   ├── todo_list_screen.dart   # Displays list of todos
+│   │   └── add_todo_screen.dart    # Screen/modal to add or edit todo
+│   ├── widgets/                    # Reusable UI components
+│   │   ├── todo_item_widget.dart   # Individual todo list item
+│   │   ├── search_todo_widget.dart # Search bar UI widget
+│   │   ├── filter_dropdown.dart    # Filter dropdown component
+│   │   └── custom_inputs.dart      # Inputs used across screens
+│   ├── services/                   # App services
+│   │   └── storage_service.dart    # Handles storing/loading todos
+│   ├── theme/                      # App theme data
+│   │   └── app_theme.dart          # Light/Dark theme definitions
+│   └── utils/                      # Utility functions/helpers
+│       └── helpers.dart
+├── assets/                         # Static assets
+│   ├── images/                     # App images used in UI
+│   └── icons/                      # Icons used in UI
+├── test/                           # Unit / widget tests
+│   └── widget_test.dart
+├── .gitignore
+├── pubspec.yaml                    # Dependencies and assets configuration
+└── README.md                       # Project documentation
+```
+# 🧠 App Workflow
+
+1. User launches the app
+2. Login screen is displayed
+3. On successful login:
+   User is redirected to Todo List screen
+4. User can:
+   - Add a todo
+   - Edit or delete a todo
+   - Filter/search todos
+5. UI updates dynamically
+
+# ▶️ Run the Project
+```bash
+git clone https://github.com/Jov-droid/MyApp.git
+cd MyApp
+flutter pub get
+flutter run
+```
+
+   
+
 
